@@ -17,42 +17,30 @@ import java.util.List;
 
 
 public class ArticleViewAdapter extends BaseAdapter {
-    private Drawable image;
-    private List<String> list;
+
+
     private List<String> titlesOfArticles;
     private List<String> referencesOfArticles;
-    private List<String> imagesOfArticles;
-    private List<Drawable> images;
-    private String title;
-    private String imageURL;
-    private String referenceURL;
-    private HeadlinesFragment fragment;
+    private List<Drawable> imagesOfArticles;
 
-    public ArticleViewAdapter(List<String> list,HeadlinesFragment fragment) {
-        this.list = list;
-        this.fragment = fragment;
-        imagesOfArticles = new ArrayList<String>();
-        titlesOfArticles = new ArrayList<String>();
-        referencesOfArticles = new ArrayList<String>();
-        images = new ArrayList<Drawable>();
-        Log.d("Pic",images.size()+ "");
-        String[]  separateItems = new String [3];
-        for (String s: list){
-            separateItems = s.split("11110000");
-            titlesOfArticles.add(separateItems[0]);
-            referencesOfArticles.add(separateItems[1]);
-            imagesOfArticles.add(separateItems[2]);
-        }
-        images = getImageFromURL(imagesOfArticles);
+
+
+    public ArticleViewAdapter(List<String> titles,List<String> references, List<Drawable> images, HeadlinesFragment fragment) {
+
+        Log.d("Fast$FuriousView",images.size() + "");
+        imagesOfArticles = images;
+        titlesOfArticles = titles;
+        referencesOfArticles = references;
+
     }
     @Override
     public int getCount() {
-        return list.size();
+        return titlesOfArticles.size();
     }
 
     @Override
     public String getItem(int position) {
-        return list.get(position);
+        return titlesOfArticles.get(position);
     }
 
     @Override
@@ -84,21 +72,17 @@ public class ArticleViewAdapter extends BaseAdapter {
 
 //------------
 
-        holder.text.setText(title);
+        holder.text.setText(titlesOfArticles.get(position));
       //  Log.d("Images size", this.images.size() + "");
-        //holder.im .setImageDrawable(this.images.get(position));
+        if(imagesOfArticles.size()!=0) {
+            holder.im.setImageDrawable(imagesOfArticles.get(position));
+        }else{
 
+        }
         return rootView;
     }
 
-    private List<Drawable> getImageFromURL(List<String> imageURLs) {
-        List<Drawable> images = new ArrayList<Drawable>();
-        ImageLoaderAsyncTask imageLoaderAsyncTask = new ImageLoaderAsyncTask(fragment);
-        imageLoaderAsyncTask.execute(imageURLs);
-        images = imageLoaderAsyncTask.getImages();
 
-        return images;
-    }
 
 
     public static class MyHolder {

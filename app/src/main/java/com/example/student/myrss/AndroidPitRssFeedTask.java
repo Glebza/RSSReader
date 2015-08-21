@@ -14,7 +14,7 @@ import java.util.List;
 /**
  * Created by student on 23.07.2015.
  */
-public class AndroidPitRssFeedTask extends AsyncTask<Void, Void, List<String>> {
+public class AndroidPitRssFeedTask extends AsyncTask<Void, Void, List<String[]>> {
 
 
 
@@ -28,20 +28,18 @@ public class AndroidPitRssFeedTask extends AsyncTask<Void, Void, List<String>> {
     }
 
     @Override
-    protected List<String> doInBackground(Void...voids ) {
-        List<String> result = null;
-        InputStream feed = getAndroidPitRssFeed() ;
-        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(feed));
-
+    protected List<String[]> doInBackground(Void...voids ) {
+        Log.d(getClass().getName(),"in parse");
+        List<String[]> result = null;
         RssParser rssParser = new RssParser(getAndroidPitRssFeed());
         result = rssParser.parse();
         return result;
     }
 
     @Override
-    protected void onPostExecute(List<String> rssFeed) {
+    protected void onPostExecute(List<String[]> rssFeed) {
         fragment.setFeed(rssFeed);
-        fragment.createAdapter();
+        fragment.createAdapterFeed();
 
 
 

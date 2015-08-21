@@ -5,6 +5,7 @@ import android.app.Fragment;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +16,7 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Created by student on 23.07.2015.
@@ -22,9 +24,10 @@ import java.util.List;
 public class HeadlinesFragment extends Fragment  {
     OnHeadlineSelectedListener mCallback;
     private ListView list;
-    private List<String> headlinesTitles;
-    private List<String> headlinesReferences;
-    private List<Drawable> headlinesImages;
+    private List<String> headlinesTitles = new ArrayList<String>();
+    private List<String> headlinesReferences = new ArrayList<String>();
+    private List<Drawable> headlinesImages = new ArrayList<Drawable>();
+    private List<String> getHeadlinesImagesUrls = new ArrayList<String>();
     private ArticleViewAdapter adapter;
 
     public interface OnHeadlineSelectedListener {
@@ -32,29 +35,51 @@ public class HeadlinesFragment extends Fragment  {
         public void onArticleSelected(int position);
     }
     private ListView mRssFeed;
-    List<String> rssFeed = new ArrayList<String>();
+    List<String[]> rssFeed = new ArrayList<String[]>();
     AndroidPitRssFeedTask androidPitRssFeedTask;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(getClass().getName(), "before rss parse");
         androidPitRssFeedTask = new AndroidPitRssFeedTask(this);
         androidPitRssFeedTask.execute();
         setRetainInstance(true);
 
     }
-    public void createAdapter(){
+    public void createAdapterFeed(){
+        Log.d("createAdapter", "create adapter");
         if (mRssFeed!= null){
+            Log.d("Shit","before shit");
+            for(String[] s: rssFeed){
+                headlinesTitles.add(s[0]);
+                headlinesReferences.add(s[1]);
+               getHeadlinesImagesUrls.add(s[2]);
+                Log.d("rssFeed",s[0] + " " + s[1] + " " + s[2] + " ");
+            }
+
+            ImageLoaderAsyncTask imageLoaderAsyncTask = new ImageLoaderAsyncTask(this);
+            imageLoaderAsyncTask.execute(getHeadlinesImagesUrls);
+            Log.d("FastandFurious",headlinesImages.size() + "");
 
 
-            adapter = new ArticleViewAdapter(rssFeed,this);
-            mRssFeed.setAdapter(adapter);
-
+        }else{
+            Log.d("Fragment","shit");
         }
 
     }
+    public void createAdapter(){
+        adapter = new ArticleViewAdapter(headlinesTitles,headlinesReferences,headlinesImages,this);
+        mRssFeed.setAdapter(adapter);
+    }
 
-    public void setFeed(List<String> list){
+    public void setImagesFromUrl(List<Drawable> images) {
+
+        headlinesImages = images;
+
+    }
+
+    public void setFeed(List<String[]> list){
         rssFeed = list;
     }
 

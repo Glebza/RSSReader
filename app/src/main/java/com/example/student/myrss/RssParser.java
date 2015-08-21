@@ -48,8 +48,20 @@ public class RssParser {
         }
 
     }
+    public List<String[]> parse(){
+        List<String[]> result = new ArrayList<String[]>();
+        List<String> temporary ;
+        String [] items ;
+        temporary = parseItems();
+        for (String s : temporary){
+            items = s.split(ARTICLE_STRING_DELIMETER);
+            result.add(items);
+        }
+        return result;
 
-    public List<String> parse(){
+
+    }
+    public List<String> parseItems(){
 
         List<String> items = new ArrayList<>();
         try {
