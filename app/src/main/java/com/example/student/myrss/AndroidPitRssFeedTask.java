@@ -1,11 +1,7 @@
 package com.example.student.myrss;
 
-import android.app.Activity;
-import android.app.Application;
 import android.os.AsyncTask;
 import android.util.Log;
-import android.widget.ListView;
-import android.widget.TextView;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -21,11 +17,7 @@ import java.util.List;
 public class AndroidPitRssFeedTask extends AsyncTask<Void, Void, List<String>> {
 
 
-    private Activity activity;
-    private ListView view;
-    private Application application;
-    private TextView textView;
-    private ListView listView;
+
     private HeadlinesFragment fragment;
 
     public AndroidPitRssFeedTask(HeadlinesFragment fragment) {
@@ -37,7 +29,6 @@ public class AndroidPitRssFeedTask extends AsyncTask<Void, Void, List<String>> {
 
     @Override
     protected List<String> doInBackground(Void...voids ) {
-
         List<String> result = null;
         InputStream feed = getAndroidPitRssFeed() ;
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(feed));
@@ -58,8 +49,7 @@ public class AndroidPitRssFeedTask extends AsyncTask<Void, Void, List<String>> {
     }
     public InputStream getAndroidPitRssFeed(){
         InputStream in = null;
-        String rssFeed = "";
-        String result = "";
+
         try {
 
             URL url = new URL("http://www.androidpit.com/feed/main.xml");

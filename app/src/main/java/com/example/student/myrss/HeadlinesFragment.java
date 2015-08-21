@@ -2,6 +2,7 @@ package com.example.student.myrss;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
 import android.view.LayoutInflater;
@@ -21,6 +22,10 @@ import java.util.List;
 public class HeadlinesFragment extends Fragment  {
     OnHeadlineSelectedListener mCallback;
     private ListView list;
+    private List<String> headlinesTitles;
+    private List<String> headlinesReferences;
+    private List<Drawable> headlinesImages;
+    private ArticleViewAdapter adapter;
 
     public interface OnHeadlineSelectedListener {
         /** Called by HeadlinesFragment when a list item is selected */
@@ -41,7 +46,8 @@ public class HeadlinesFragment extends Fragment  {
     public void createAdapter(){
         if (mRssFeed!= null){
 
-            ArrayAdapter<String> adapter = new ArrayAdapter<String>(mRssFeed.getContext(), android.R.layout.simple_list_item_1,rssFeed);
+
+            adapter = new ArticleViewAdapter(rssFeed,this);
             mRssFeed.setAdapter(adapter);
 
         }
@@ -75,6 +81,7 @@ public class HeadlinesFragment extends Fragment  {
     public void onStart() {
         super.onStart();
         list = (ListView) getActivity().findViewById(R.id.list);
+
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {

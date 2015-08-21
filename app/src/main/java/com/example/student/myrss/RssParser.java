@@ -18,6 +18,7 @@ import java.util.List;
  * Created by student on 24.07.2015.
  */
 public class RssParser {
+    private static final String ARTICLE_STRING_DELIMETER = "11110000";
     XmlPullParserFactory factory;
     XmlPullParser parser;
     InputStream is;
@@ -47,6 +48,7 @@ public class RssParser {
         }
 
     }
+
     public List<String> parse(){
 
         List<String> items = new ArrayList<>();
@@ -63,18 +65,7 @@ public class RssParser {
         return  items;
     }
     private List<String> readRss()  throws XmlPullParserException, IOException {
-        // Log.i("LAB10", "Im in readRss, feed = " +is.toString());
-    /* BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(this.is));
-            String s;
-            String result = "";
-            try {
-                while ((s = bufferedReader.readLine())!= null){
-                    result += s;
-                }
-                Log.i("LAB10", "total = " + result);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }*/
+
         List<String> items = new ArrayList<>();
         Log.i("LAB10", String.valueOf(parser.getEventType()));
         int nextEvent = parser.next();
@@ -115,21 +106,34 @@ public class RssParser {
         return items;
     }
     private String readItem(XmlPullParser parser) throws XmlPullParserException, IOException {
-        String result = null;
+        String result = "";
         parser.require(XmlPullParser.START_TAG, null, "item");
         while (parser.next() != XmlPullParser.END_TAG) {
             if (parser.getEventType() != XmlPullParser.START_TAG) {
                 continue;
             }
             String name = parser.getName();
-            if (name.equals("title")) {
-                result = readTitle(parser);
-            } else {
-                skip(parser);
+            Log.d(getClass().getName(),"tag name is " + name);
+            switch (name) {
+                case "title":{
+                   result += readTitle(parser)+ ARTICLE_STRING_DELIMETER;
+                    break;
+                }
+                case "link" : {
+                   result += readLink(parser) + ARTICLE_STRING_DELIMETER;
+                    break;
+                }
+                case "description" :{
+                    result += readDescription(parser);
+                    break;
+                }
+                default:
+                    skip(parser);
             }
         }
         return result;
     }
+
     // Processes title tags in the feed.
     private String readTitle(XmlPullParser parser)
             throws IOException, XmlPullParserException {
@@ -138,6 +142,29 @@ public class RssParser {
         parser.require(XmlPullParser.END_TAG, null, "title");
         return title;
     }
+
+    private String readLink(XmlPullParser parser)
+            throws IOException, XmlPullParserException {
+        parser.require(XmlPullParser.START_TAG, null, "link");
+        String link = readText(parser);
+        parser.require(XmlPullParser.END_TAG, null, "link");
+        return link;
+
+    }
+
+    private String readDescription(XmlPullParser parser)
+            throws IOException, XmlPullParserException {
+
+        String imgUrl = "";
+        parser.require(XmlPullParser.START_TAG,null, "description");
+
+        imgUrl = readText(parser);
+        parser.require(XmlPullParser.END_TAG,null,"description");
+        imgUrl = imgUrl.split("img src=\"")[1];
+        imgUrl = imgUrl.split("\">")[0];
+        return imgUrl;
+    }
+
     private String readText(XmlPullParser parser)
             throws IOException, XmlPullParserException {
         String result = "";
