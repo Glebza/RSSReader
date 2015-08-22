@@ -7,6 +7,9 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+
 
 public class MainActivity extends Activity  implements HeadlinesFragment.OnHeadlineSelectedListener{
 
@@ -15,7 +18,10 @@ public class MainActivity extends Activity  implements HeadlinesFragment.OnHeadl
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        ImageLoader imageLoader;
+        ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(this).build();
+        imageLoader = ImageLoader.getInstance();
+        imageLoader.init(config);
 
         FragmentManager fragmentManager = getFragmentManager();
        if( fragmentManager.findFragmentById(R.id.frame)== null){

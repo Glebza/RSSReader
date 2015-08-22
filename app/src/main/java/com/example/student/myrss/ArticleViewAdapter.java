@@ -12,6 +12,8 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.nostra13.universalimageloader.core.ImageLoader;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,16 +23,17 @@ public class ArticleViewAdapter extends BaseAdapter {
 
     private List<String> titlesOfArticles;
     private List<String> referencesOfArticles;
-    private List<Drawable> imagesOfArticles;
+    private List<String> imagesOfArticles;
+    private  ImageLoader imageLoader;
+    private boolean onLoadComplete = false;
 
+    public ArticleViewAdapter(List<String> titles,List<String> references, List<String> imagesUrls, HeadlinesFragment fragment,ImageLoader imageLoader) {
 
-
-    public ArticleViewAdapter(List<String> titles,List<String> references, List<Drawable> images, HeadlinesFragment fragment) {
-
-        Log.d("Fast$FuriousView",images.size() + "");
-        imagesOfArticles = images;
+        Log.d("Fast$FuriousView",imagesUrls.size() + "");
+        imagesOfArticles = imagesUrls;
         titlesOfArticles = titles;
         referencesOfArticles = references;
+        this.imageLoader = imageLoader;
 
     }
     @Override
@@ -74,8 +77,10 @@ public class ArticleViewAdapter extends BaseAdapter {
 
         holder.text.setText(titlesOfArticles.get(position));
       //  Log.d("Images size", this.images.size() + "");
-        if(imagesOfArticles.size()!=0) {
-            holder.im.setImageDrawable(imagesOfArticles.get(position));
+        if(!onLoadComplete) {
+
+            imageLoader.displayImage(imagesOfArticles.get(position), holder.im);
+            onLoadComplete = true;
         }else{
 
         }

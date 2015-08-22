@@ -10,13 +10,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.nostra13.universalimageloader.core.ImageLoader;
+
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Created by student on 23.07.2015.
@@ -27,7 +27,7 @@ public class HeadlinesFragment extends Fragment  {
     private List<String> headlinesTitles = new ArrayList<String>();
     private List<String> headlinesReferences = new ArrayList<String>();
     private List<Drawable> headlinesImages = new ArrayList<Drawable>();
-    private List<String> getHeadlinesImagesUrls = new ArrayList<String>();
+    private List<String> headlinesImagesUrls = new ArrayList<String>();
     private ArticleViewAdapter adapter;
 
     public interface OnHeadlineSelectedListener {
@@ -54,12 +54,13 @@ public class HeadlinesFragment extends Fragment  {
             for(String[] s: rssFeed){
                 headlinesTitles.add(s[0]);
                 headlinesReferences.add(s[1]);
-               getHeadlinesImagesUrls.add(s[2]);
+               headlinesImagesUrls.add(s[2]);
                 Log.d("rssFeed",s[0] + " " + s[1] + " " + s[2] + " ");
             }
 
-            ImageLoaderAsyncTask imageLoaderAsyncTask = new ImageLoaderAsyncTask(this);
-            imageLoaderAsyncTask.execute(getHeadlinesImagesUrls);
+            createAdapter();
+           /* ImageLoaderAsyncTask imageLoaderAsyncTask = new ImageLoaderAsyncTask(this);
+            imageLoaderAsyncTask.execute(HeadlinesImagesUrls);*/
             Log.d("FastandFurious",headlinesImages.size() + "");
 
 
@@ -69,7 +70,8 @@ public class HeadlinesFragment extends Fragment  {
 
     }
     public void createAdapter(){
-        adapter = new ArticleViewAdapter(headlinesTitles,headlinesReferences,headlinesImages,this);
+
+        adapter = new ArticleViewAdapter(headlinesTitles,headlinesReferences,headlinesImagesUrls,this,ImageLoader.getInstance());
         mRssFeed.setAdapter(adapter);
     }
 
@@ -96,7 +98,7 @@ public class HeadlinesFragment extends Fragment  {
 
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
         mRssFeed = (ListView) rootView.findViewById(R.id.list);
-        createAdapter();
+        createAdapterFeed();
 
 
 
