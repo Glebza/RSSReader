@@ -1,9 +1,12 @@
 package com.example.student.myrss;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 
 
+import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,13 +15,21 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.assist.FailReason;
+import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
+import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 
 
 public class ArticleViewAdapter extends BaseAdapter {
+
 
 
     private List<String> titlesOfArticles;
@@ -26,14 +37,23 @@ public class ArticleViewAdapter extends BaseAdapter {
     private List<String> imagesOfArticles;
     private  ImageLoader imageLoader;
     private boolean onLoadComplete = false;
-
-    public ArticleViewAdapter(List<String> titles,List<String> references, List<String> imagesUrls, HeadlinesFragment fragment,ImageLoader imageLoader) {
+    Bundle bundle = new Bundle();
+    private boolean[] imagesLoaded;
+    private DisplayImageOptions options;
+    private ImageLoadingListener animateFirstListener ;
+    public ArticleViewAdapter(List<String> titles,List<String> references, List<String> imagesUrls, HeadlinesFragment fragment) {
 
         Log.d("Fast$FuriousView",imagesUrls.size() + "");
         imagesOfArticles = imagesUrls;
         titlesOfArticles = titles;
         referencesOfArticles = references;
-        this.imageLoader = imageLoader;
+        this.imagesLoaded = new boolean[imagesUrls.size()];
+        animateFirstListener = new AnimateFirstDisplayListener();
+        options = new DisplayImageOptions.Builder()
+                .cacheInMemory(true)
+                .cacheOnDisk(true)
+                .considerExifParams(true)
+                .build();
 
     }
     @Override
@@ -67,6 +87,8 @@ public class ArticleViewAdapter extends BaseAdapter {
 
             holder = new MyHolder(headlineText, headlineImage);
             rootView.setTag(holder);
+
+
         } else { // convertView != null, �.�. ������� �� �����������
             rootView = convertView;
             holder = (MyHolder)convertView.getTag();
@@ -74,21 +96,12 @@ public class ArticleViewAdapter extends BaseAdapter {
 
 
 //------------
-
         holder.text.setText(titlesOfArticles.get(position));
-      //  Log.d("Images size", this.images.size() + "");
-        if(!onLoadComplete) {
+        ImageLoader.getInstance().displayImage(imagesOfArticles.get(position), holder.im, options, animateFirstListener);
 
-            imageLoader.displayImage(imagesOfArticles.get(position), holder.im);
-            onLoadComplete = true;
-        }else{
 
-        }
         return rootView;
     }
-
-
-
 
     public static class MyHolder {
         public TextView text;
@@ -100,4 +113,33 @@ public class ArticleViewAdapter extends BaseAdapter {
         }
     }
 
+    private static class AnimateFirstDisplayListener implements ImageLoadingListener {
+        static final List<String> displayedImages = Collections.synchronizedList(new LinkedList<String>());
+        @Override
+        public void onLoadingStarted(String imageUri, View view) {
+
+        }
+
+        @Override
+        public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
+
+        }
+
+        @Override
+        public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+            if (loadedImage != null) {
+                ImageView imageView = (ImageView) view;
+                boolean firstDisplay = !displayedImages.contains(imageUri);
+                if (firstDisplay) {
+                    FadeInBitmapDisplayer.animate(imageView, 500);
+                    displayedImages.add(imageUri);
+                }
+            }
+        }
+
+        @Override
+        public void onLoadingCancelled(String imageUri, View view) {
+
+        }
+    }
 }

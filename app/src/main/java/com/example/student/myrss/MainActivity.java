@@ -10,9 +10,15 @@ import android.view.MenuItem;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 public class MainActivity extends Activity  implements HeadlinesFragment.OnHeadlineSelectedListener{
-
+    public static final String ARTICLE_URL = "Article";
+private List<String> articles = new ArrayList<String>();
+    private HeadlinesFragment headlinesFragment;
+    private List<String> articlesUrls;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,7 +33,7 @@ public class MainActivity extends Activity  implements HeadlinesFragment.OnHeadl
        if( fragmentManager.findFragmentById(R.id.frame)== null){
 
            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-           HeadlinesFragment headlinesFragment = new HeadlinesFragment();
+            headlinesFragment = new HeadlinesFragment();
            fragmentTransaction.replace(R.id.frame, headlinesFragment);
            fragmentTransaction.commit();
 
@@ -64,7 +70,7 @@ public class MainActivity extends Activity  implements HeadlinesFragment.OnHeadl
 
         // Capture the article fragment from the activity layout
         ArticleFragment articleFrag = (ArticleFragment)getFragmentManager().findFragmentById(R.id.article_fragment);
-
+        articlesUrls = headlinesFragment.getArticlesUrl();
         if (articleFrag != null) {
             // If article frag is available, we're in two-pane layout...
 
@@ -78,6 +84,7 @@ public class MainActivity extends Activity  implements HeadlinesFragment.OnHeadl
             ArticleFragment newFragment = new ArticleFragment();
             Bundle args = new Bundle();
             args.putInt(ArticleFragment.ARG_POSITION, position);
+            args.putString(ARTICLE_URL,articlesUrls.get(position));
             newFragment.setArguments(args);
             FragmentTransaction transaction = getFragmentManager().beginTransaction();
 
@@ -91,4 +98,5 @@ public class MainActivity extends Activity  implements HeadlinesFragment.OnHeadl
             transaction.commit();
         }
     }
+
 }

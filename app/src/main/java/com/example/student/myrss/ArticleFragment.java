@@ -17,6 +17,7 @@ package com.example.student.myrss;
 
 import android.app.Fragment;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,6 +28,8 @@ import com.example.student.myrss.R;
 public class ArticleFragment extends Fragment {
     final static String ARG_POSITION = "position";
     int mCurrentPosition = -1;
+    String link;
+    Bundle args;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -51,9 +54,10 @@ public class ArticleFragment extends Fragment {
         // onStart is a good place to do this because the layout has already been
         // applied to the fragment at this point so we can safely call the method
         // below that sets the article text.
-        Bundle args = getArguments();
+        args = getArguments();
         if (args != null) {
             // Set article based on argument passed in
+//            Log.d("Bundle",args.getString(ArticleViewAdapter.ARTICLE_URL));
             updateArticleView(args.getInt(ARG_POSITION));
         } else if (mCurrentPosition != -1) {
             // Set article based on saved instance state defined during onCreateView
@@ -63,7 +67,7 @@ public class ArticleFragment extends Fragment {
 
     public void updateArticleView(int position) {
         TextView article = (TextView) getActivity().findViewById(R.id.article);
-        article.setText(String.valueOf(position));
+        article.setText(args.getString(MainActivity.ARTICLE_URL) + " "+ position);
         mCurrentPosition = position;
     }
 

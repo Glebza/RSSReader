@@ -30,6 +30,10 @@ public class HeadlinesFragment extends Fragment  {
     private List<String> headlinesImagesUrls = new ArrayList<String>();
     private ArticleViewAdapter adapter;
 
+    public List<String> getArticlesUrl() {
+        return headlinesReferences;
+    }
+
     public interface OnHeadlineSelectedListener {
         /** Called by HeadlinesFragment when a list item is selected */
         public void onArticleSelected(int position);
@@ -50,13 +54,14 @@ public class HeadlinesFragment extends Fragment  {
     public void createAdapterFeed(){
         Log.d("createAdapter", "create adapter");
         if (mRssFeed!= null){
-            Log.d("Shit","before shit");
+            Log.d("Shit", "before shit");
             for(String[] s: rssFeed){
                 headlinesTitles.add(s[0]);
                 headlinesReferences.add(s[1]);
                headlinesImagesUrls.add(s[2]);
                 Log.d("rssFeed",s[0] + " " + s[1] + " " + s[2] + " ");
             }
+
 
             createAdapter();
            /* ImageLoaderAsyncTask imageLoaderAsyncTask = new ImageLoaderAsyncTask(this);
@@ -65,13 +70,13 @@ public class HeadlinesFragment extends Fragment  {
 
 
         }else{
-            Log.d("Fragment","shit");
+
         }
 
     }
     public void createAdapter(){
 
-        adapter = new ArticleViewAdapter(headlinesTitles,headlinesReferences,headlinesImagesUrls,this,ImageLoader.getInstance());
+        adapter = new ArticleViewAdapter(headlinesTitles,headlinesReferences,headlinesImagesUrls,this);
         mRssFeed.setAdapter(adapter);
     }
 
