@@ -24,6 +24,7 @@ private List<String> articles = new ArrayList<String>();
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         ImageLoader imageLoader;
         ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(this).build();
         imageLoader = ImageLoader.getInstance();

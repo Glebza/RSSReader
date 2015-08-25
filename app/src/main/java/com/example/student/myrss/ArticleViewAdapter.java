@@ -86,19 +86,19 @@ public class ArticleViewAdapter extends BaseAdapter {
             ImageView headlineImage = (ImageView) rootView.findViewById(R.id.headlines_image);
 
             holder = new MyHolder(headlineText, headlineImage);
+
             rootView.setTag(holder);
 
 
         } else { // convertView != null, �.�. ������� �� �����������
             rootView = convertView;
             holder = (MyHolder)convertView.getTag();
-        }
+               }
 
 
 //------------
         holder.text.setText(titlesOfArticles.get(position));
         ImageLoader.getInstance().displayImage(imagesOfArticles.get(position), holder.im, options, animateFirstListener);
-
 
         return rootView;
     }

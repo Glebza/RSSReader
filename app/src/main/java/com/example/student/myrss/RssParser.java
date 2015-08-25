@@ -125,7 +125,6 @@ public class RssParser {
                 continue;
             }
             String name = parser.getName();
-            Log.d(getClass().getName(),"tag name is " + name);
             switch (name) {
                 case "title":{
                    result += readTitle(parser)+ ARTICLE_STRING_DELIMETER;

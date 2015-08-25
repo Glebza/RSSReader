@@ -23,6 +23,7 @@ import java.util.List;
  */
 public class HeadlinesFragment extends Fragment  {
     OnHeadlineSelectedListener mCallback;
+
     private ListView list;
     private List<String> headlinesTitles = new ArrayList<String>();
     private List<String> headlinesReferences = new ArrayList<String>();
@@ -54,7 +55,6 @@ public class HeadlinesFragment extends Fragment  {
     public void createAdapterFeed(){
         Log.d("createAdapter", "create adapter");
         if (mRssFeed!= null){
-            Log.d("Shit", "before shit");
             for(String[] s: rssFeed){
                 headlinesTitles.add(s[0]);
                 headlinesReferences.add(s[1]);
@@ -93,7 +93,7 @@ public class HeadlinesFragment extends Fragment  {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        mRssFeed = null;
+     //   mRssFeed = null;
     }
 
 
@@ -103,7 +103,7 @@ public class HeadlinesFragment extends Fragment  {
 
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
         mRssFeed = (ListView) rootView.findViewById(R.id.list);
-        createAdapterFeed();
+       createAdapter();
 
 
 
