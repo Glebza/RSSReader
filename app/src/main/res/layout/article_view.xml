@@ -3,18 +3,16 @@
     android:layout_height="match_parent"
     tools:context="com.example.student.myrss.ArticleFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/newsPicture"/>
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/newsHeader"/>
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/article"/>
+  <ScrollView
+      android:layout_width="match_parent"
+      android:layout_height="match_parent">
+  <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:orientation="vertical"
+      android:id="@+id/layoutForImages" >
+
+  </LinearLayout>
+  </ScrollView>
 
 </FrameLayout>

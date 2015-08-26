@@ -21,15 +21,25 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.student.myrss.R;
 
+import java.util.LinkedHashMap;
+/*TODO: Разобраться с загрузкой и отображением элементов*/
 public class ArticleFragment extends Fragment {
     final static String ARG_POSITION = "position";
     int mCurrentPosition = -1;
     String link;
     Bundle args;
+    private LinearLayout linearLayout;
+    private String TAG = ArticleFragment.class.getName();
+
+
+    public LinearLayout getLinearLayout() {
+        return linearLayout;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -49,7 +59,8 @@ public class ArticleFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-
+        Log.d(TAG,"onStart");
+        linearLayout  = (LinearLayout) getActivity().findViewById(R.id.layoutForImages);
         // During startup, check if there are arguments passed to the fragment.
         // onStart is a good place to do this because the layout has already been
         // applied to the fragment at this point so we can safely call the method
@@ -66,9 +77,11 @@ public class ArticleFragment extends Fragment {
     }
 
     public void updateArticleView(int position) {
-        TextView article = (TextView) getActivity().findViewById(R.id.article);
-        article.setText(args.getString(MainActivity.ARTICLE_URL) + " "+ position);
+     //   TextView article = (TextView) getActivity().findViewById(R.id.article);
+      //  article.setText(args.getString(MainActivity.ARTICLE_URL) + " "+ position);
         mCurrentPosition = position;
+        ArticleLoaderAsyncTask articleLoaderAsyncTask = new ArticleLoaderAsyncTask(this);
+        articleLoaderAsyncTask.execute(args.getString(MainActivity.ARTICLE_URL));
     }
 
     @Override
