@@ -31,7 +31,7 @@ import java.util.List;
 public class ArticleViewAdapter extends BaseAdapter {
 
 
-
+    public static final int DURATION_MILLIS = 500;
     private List<String> titlesOfArticles;
     private List<String> referencesOfArticles;
     private List<String> imagesOfArticles;
@@ -90,7 +90,7 @@ public class ArticleViewAdapter extends BaseAdapter {
             rootView.setTag(holder);
 
 
-        } else { // convertView != null, �.�. ������� �� �����������
+        } else {
             rootView = convertView;
             holder = (MyHolder)convertView.getTag();
                }
@@ -131,7 +131,7 @@ public class ArticleViewAdapter extends BaseAdapter {
                 ImageView imageView = (ImageView) view;
                 boolean firstDisplay = !displayedImages.contains(imageUri);
                 if (firstDisplay) {
-                    FadeInBitmapDisplayer.animate(imageView, 500);
+                    FadeInBitmapDisplayer.animate(imageView, DURATION_MILLIS);
                     displayedImages.add(imageUri);
                 }
             }

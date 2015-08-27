@@ -17,13 +17,14 @@ import java.util.List;
 public class AndroidPitRssFeedTask extends AsyncTask<Void, Void, List<String[]>> {
 
 
-
+    public static final String SITE_URL = "http://www.androidpit.com/feed/main.xml";
+    public static final String TAG = AndroidPitRssFeedTask.class.getName();
+    public static final String LOCATION = "Location";
     private HeadlinesFragment fragment;
 
     public AndroidPitRssFeedTask(HeadlinesFragment fragment) {
         this.fragment = fragment;
-      //  this.activity = activity;
-       // textView = (TextView)activity.findViewById(R.id.rss_feed);
+
 
     }
 
@@ -50,7 +51,7 @@ public class AndroidPitRssFeedTask extends AsyncTask<Void, Void, List<String[]>>
 
         try {
 
-            URL url = new URL("http://www.androidpit.com/feed/main.xml");
+            URL url = new URL(SITE_URL);
 
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setInstanceFollowRedirects(true);
@@ -58,10 +59,10 @@ public class AndroidPitRssFeedTask extends AsyncTask<Void, Void, List<String[]>>
 
 
             String newURL;
-            Log.i("LAb 10 lkgh", String.valueOf(conn.getResponseCode()));
+            Log.i(TAG, String.valueOf(conn.getResponseCode()));
 
             while (conn.getResponseCode() == HttpURLConnection.HTTP_MOVED_TEMP || conn.getResponseCode() == HttpURLConnection.HTTP_MOVED_PERM){
-                newURL = conn.getHeaderField("Location");
+                newURL = conn.getHeaderField(LOCATION);
                 conn = (HttpURLConnection)new URL(newURL).openConnection();
             }
             in = conn.getInputStream();

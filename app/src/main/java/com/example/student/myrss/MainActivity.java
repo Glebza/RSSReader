@@ -16,7 +16,6 @@ import java.util.List;
 
 public class MainActivity extends Activity  implements HeadlinesFragment.OnHeadlineSelectedListener{
     public static final String ARTICLE_URL = "Article";
-private List<String> articles = new ArrayList<String>();
     private HeadlinesFragment headlinesFragment;
     private List<String> articlesUrls;
 

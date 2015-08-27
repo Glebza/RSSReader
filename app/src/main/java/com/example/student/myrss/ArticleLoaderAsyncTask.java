@@ -67,6 +67,7 @@ public class ArticleLoaderAsyncTask extends AsyncTask<String,Void,Void> {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
         return null;
     }
 

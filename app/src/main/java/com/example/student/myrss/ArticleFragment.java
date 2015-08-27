@@ -27,7 +27,6 @@ import android.widget.TextView;
 import com.example.student.myrss.R;
 
 import java.util.LinkedHashMap;
-/*TODO: Разобраться с загрузкой и отображением элементов*/
 public class ArticleFragment extends Fragment {
     final static String ARG_POSITION = "position";
     int mCurrentPosition = -1;
@@ -35,6 +34,7 @@ public class ArticleFragment extends Fragment {
     Bundle args;
     private LinearLayout linearLayout;
     private String TAG = ArticleFragment.class.getName();
+    private boolean isArticalLoaded = false;
 
 
     public LinearLayout getLinearLayout() {
@@ -77,12 +77,14 @@ public class ArticleFragment extends Fragment {
     }
 
     public void updateArticleView(int position) {
-     //   TextView article = (TextView) getActivity().findViewById(R.id.article);
-      //  article.setText(args.getString(MainActivity.ARTICLE_URL) + " "+ position);
+
         mCurrentPosition = position;
-        ArticleLoaderAsyncTask articleLoaderAsyncTask = new ArticleLoaderAsyncTask(this);
-        articleLoaderAsyncTask.execute(args.getString(MainActivity.ARTICLE_URL));
-    }
+        if (!isArticalLoaded){
+            ArticleLoaderAsyncTask articleLoaderAsyncTask = new ArticleLoaderAsyncTask(this);
+            articleLoaderAsyncTask.execute(args.getString(MainActivity.ARTICLE_URL));
+            isArticalLoaded = true;
+        }
+        }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {

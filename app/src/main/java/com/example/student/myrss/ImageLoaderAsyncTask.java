@@ -33,13 +33,9 @@ public class ImageLoaderAsyncTask extends AsyncTask<List<String>, Void, List<Dra
         try {
             for (String imageUrl : params[0]){
 
-                Log.d("ImagesBeforeLoad", new Date().getTime() + "");
                 InputStream is = (InputStream) new URL(imageUrl).getContent();
                 Drawable drawable = Drawable.createFromStream(is, "src name");
-                Log.d("ImagesAftereLoad", new Date().getTime() + "");
                 images.add(drawable);
-
-                Log.d("ImagesLoaded",images.get(0).hashCode() + "");
                 is.close();
 
             }

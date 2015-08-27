@@ -13,8 +13,6 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.nostra13.universalimageloader.core.ImageLoader;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,6 +20,9 @@ import java.util.List;
  * Created by student on 23.07.2015.
  */
 public class HeadlinesFragment extends Fragment  {
+    public static final int POSITION_OF_TITLES_IN_FEED = 0;
+    public static final int POSITION_OF_LINKS_IN_FEED = 1;
+    public static final int POSITION_OF_HEADLINES_IMAGES_IN_FEED = 2;
     OnHeadlineSelectedListener mCallback;
 
     private ListView list;
@@ -37,7 +38,7 @@ public class HeadlinesFragment extends Fragment  {
 
     public interface OnHeadlineSelectedListener {
         /** Called by HeadlinesFragment when a list item is selected */
-        public void onArticleSelected(int position);
+         void onArticleSelected(int position);
     }
     private ListView mRssFeed;
     List<String[]> rssFeed = new ArrayList<String[]>();
@@ -56,21 +57,15 @@ public class HeadlinesFragment extends Fragment  {
         Log.d("createAdapter", "create adapter");
         if (mRssFeed!= null){
             for(String[] s: rssFeed){
-                headlinesTitles.add(s[0]);
-                headlinesReferences.add(s[1]);
-               headlinesImagesUrls.add(s[2]);
-                Log.d("rssFeed",s[0] + " " + s[1] + " " + s[2] + " ");
+                headlinesTitles.add(s[POSITION_OF_TITLES_IN_FEED]);
+                headlinesReferences.add(s[POSITION_OF_LINKS_IN_FEED]);
+               headlinesImagesUrls.add(s[POSITION_OF_HEADLINES_IMAGES_IN_FEED]);
+                //Log.d("rssFeed",s[0] + " " + s[1] + " " + s[2] + " ");
             }
-
 
             createAdapter();
            /* ImageLoaderAsyncTask imageLoaderAsyncTask = new ImageLoaderAsyncTask(this);
             imageLoaderAsyncTask.execute(HeadlinesImagesUrls);*/
-            Log.d("FastandFurious",headlinesImages.size() + "");
-
-
-        }else{
-
         }
 
     }
@@ -100,12 +95,9 @@ public class HeadlinesFragment extends Fragment  {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
         mRssFeed = (ListView) rootView.findViewById(R.id.list);
-       createAdapter();
-
-
+        createAdapter();
 
         return rootView;
     }
@@ -117,7 +109,6 @@ public class HeadlinesFragment extends Fragment  {
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(getActivity(),"Wooohooo",Toast.LENGTH_SHORT).show();
                mCallback.onArticleSelected(position);
             }
         }) ;
