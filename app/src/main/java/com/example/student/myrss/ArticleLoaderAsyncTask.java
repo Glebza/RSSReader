@@ -1,5 +1,6 @@
 package com.example.student.myrss;
 
+import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.ImageView;
@@ -28,10 +29,23 @@ public class ArticleLoaderAsyncTask extends AsyncTask<String,Void,Void> {
     private List<String> bitmapImagesUrls;
     private String articleHeader;
     private LinkedHashMap<String,String> markup;
+    private ProgressDialog progDailog;
+
     public ArticleLoaderAsyncTask(ArticleFragment articleFragment) {
         this.articleFragment = articleFragment;
         bitmapImagesUrls = new ArrayList<>();
         markup = new LinkedHashMap<>();
+    }
+
+    @Override
+    protected void onPreExecute() {
+        super.onPreExecute();
+        progDailog = new ProgressDialog(articleFragment.getActivity());
+        progDailog.setMessage("Loading...");
+        progDailog.setIndeterminate(false);
+        progDailog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progDailog.setCancelable(true);
+        progDailog.show();
     }
 
     @Override
@@ -43,19 +57,16 @@ public class ArticleLoaderAsyncTask extends AsyncTask<String,Void,Void> {
             articleHeader = header.text() ;
 
             Elements sections = document.getElementsByTag("section");
-            Log.d(TAG, "Numbers of section: " + sections.size() + " " + sections.attr("class"));
 
             String imgSrc = "";
             for (Element e: sections){
                     Elements elements = e.getAllElements();
                // Log.d(TAG, "Numbers of section's children: " + elements.size() + "");
                     for (Element element : elements){
-                        Log.d(TAG,element.tag() + "");
                         if (element.tag().toString().equals("p")){
                             markup.put(element.text(),"p");
                         }
                         if (element.tag().toString().equals("img")){
-                            Log.d(TAG,"im an image and im jump into map" + element.attr("src"));
                             markup.put(element.attr("src"),"img");
 
                         }
@@ -97,12 +108,17 @@ public class ArticleLoaderAsyncTask extends AsyncTask<String,Void,Void> {
         }
 
         // ImageView logo = (ImageView) articleFragment.getActivity().findViewById(R.id.newsPicture);
-        for (String url : bitmapImagesUrls){
+      /*  for (String url : bitmapImagesUrls){
             if (articleFragment == null){
                 Log.d(TAG,"link to fragment is NUUUUUUUUUUUL bitch!");
             }
 
-        }
+        }*/
+        progDailog.dismiss();
+
+    }
+    public void stopLoading(){
+        progDailog.cancel();
     }
 
 }

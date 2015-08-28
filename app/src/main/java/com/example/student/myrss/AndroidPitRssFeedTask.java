@@ -1,5 +1,6 @@
 package com.example.student.myrss;
 
+import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -21,11 +22,23 @@ public class AndroidPitRssFeedTask extends AsyncTask<Void, Void, List<String[]>>
     public static final String TAG = AndroidPitRssFeedTask.class.getName();
     public static final String LOCATION = "Location";
     private HeadlinesFragment fragment;
+    private ProgressDialog progDailog;
 
     public AndroidPitRssFeedTask(HeadlinesFragment fragment) {
         this.fragment = fragment;
 
 
+    }
+
+    @Override
+    protected void onPreExecute() {
+        super.onPreExecute();
+         progDailog = new ProgressDialog(fragment.getActivity());
+        progDailog.setMessage("Loading...");
+        progDailog.setIndeterminate(false);
+        progDailog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progDailog.setCancelable(true);
+        progDailog.show();
     }
 
     @Override
@@ -41,6 +54,8 @@ public class AndroidPitRssFeedTask extends AsyncTask<Void, Void, List<String[]>>
     protected void onPostExecute(List<String[]> rssFeed) {
         fragment.setFeed(rssFeed);
         fragment.createAdapterFeed();
+        progDailog.dismiss();
+
 
 
 
@@ -71,5 +86,10 @@ public class AndroidPitRssFeedTask extends AsyncTask<Void, Void, List<String[]>>
             e.printStackTrace();
         }
         return in;
+
+
+    }
+    public void stopProgressDialog(){
+        progDailog.cancel();
     }
 }

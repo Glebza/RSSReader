@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -16,12 +17,15 @@ import java.util.List;
 
 public class MainActivity extends Activity  implements HeadlinesFragment.OnHeadlineSelectedListener{
     public static final String ARTICLE_URL = "Article";
+    public static final String TAG = MainActivity.class.getName();
+    public static final String HEADLINES_FRAGMENT = "headlinesFragment";
     private HeadlinesFragment headlinesFragment;
-    private List<String> articlesUrls;
+    private List<String> articlesUrls ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(TAG, "onCreate");
         setContentView(R.layout.activity_main);
 
         ImageLoader imageLoader;
@@ -30,18 +34,24 @@ public class MainActivity extends Activity  implements HeadlinesFragment.OnHeadl
         imageLoader.init(config);
 
         FragmentManager fragmentManager = getFragmentManager();
-       if( fragmentManager.findFragmentById(R.id.frame)== null){
-
+       if( fragmentManager.findFragmentByTag(HEADLINES_FRAGMENT)== null){
+            Log.d(TAG,"headlines Fragment is not created");
            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
             headlinesFragment = new HeadlinesFragment();
-           fragmentTransaction.replace(R.id.frame, headlinesFragment);
+           fragmentTransaction.add(R.id.frame, headlinesFragment, HEADLINES_FRAGMENT);
+           //fragmentTransaction.replace(R.id.frame, headlinesFragment);
            fragmentTransaction.commit();
 
 
        }else{
-
+           Log.d(TAG,"headlines Fragment is created");
+           headlinesFragment = (HeadlinesFragment) fragmentManager.findFragmentByTag(HEADLINES_FRAGMENT);
+           if (headlinesFragment == null){
+               Log.d(TAG,"WTF!!!");
+           }
        }
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -70,6 +80,15 @@ public class MainActivity extends Activity  implements HeadlinesFragment.OnHeadl
 
         // Capture the article fragment from the activity layout
         ArticleFragment articleFrag = (ArticleFragment)getFragmentManager().findFragmentById(R.id.article_fragment);
+
+        if (articlesUrls == null) {
+            Log.d(TAG,"articlesURL is null");
+        }
+        if (headlinesFragment == null) {
+            Log.d(TAG,"headlinesFragment is null");
+        }
+
+
         articlesUrls = headlinesFragment.getArticlesUrl();
         if (articleFrag != null) {
             // If article frag is available, we're in two-pane layout...

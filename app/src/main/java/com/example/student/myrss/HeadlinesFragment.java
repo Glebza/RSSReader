@@ -11,7 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +22,7 @@ public class HeadlinesFragment extends Fragment  {
     public static final int POSITION_OF_TITLES_IN_FEED = 0;
     public static final int POSITION_OF_LINKS_IN_FEED = 1;
     public static final int POSITION_OF_HEADLINES_IMAGES_IN_FEED = 2;
+    public static final String TAG = HeadlinesFragment.class.getSimpleName();
     OnHeadlineSelectedListener mCallback;
 
     private ListView list;
@@ -47,10 +47,11 @@ public class HeadlinesFragment extends Fragment  {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d(getClass().getName(), "before rss parse");
+        Log.d(TAG, "OnCreate");
+        setRetainInstance(true);
         androidPitRssFeedTask = new AndroidPitRssFeedTask(this);
         androidPitRssFeedTask.execute();
-        setRetainInstance(true);
+
 
     }
     public void createAdapterFeed(){
@@ -64,14 +65,16 @@ public class HeadlinesFragment extends Fragment  {
             }
 
             createAdapter();
-           /* ImageLoaderAsyncTask imageLoaderAsyncTask = new ImageLoaderAsyncTask(this);
-            imageLoaderAsyncTask.execute(HeadlinesImagesUrls);*/
+
         }
 
     }
     public void createAdapter(){
-
+        if (headlinesReferences == null) {
+            Log.d(TAG,"headlinesRef is null");
+        }
         adapter = new ArticleViewAdapter(headlinesTitles,headlinesReferences,headlinesImagesUrls,this);
+
         mRssFeed.setAdapter(adapter);
     }
 
@@ -96,7 +99,7 @@ public class HeadlinesFragment extends Fragment  {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-        mRssFeed = (ListView) rootView.findViewById(R.id.list);
+        mRssFeed = (ListView) rootView.findViewById(R.id.headlinesListView);
         createAdapter();
 
         return rootView;
@@ -104,7 +107,7 @@ public class HeadlinesFragment extends Fragment  {
     @Override
     public void onStart() {
         super.onStart();
-        list = (ListView) getActivity().findViewById(R.id.list);
+        list = (ListView) getActivity().findViewById(R.id.headlinesListView);
 
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -119,6 +122,7 @@ public class HeadlinesFragment extends Fragment  {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
+        Log.d(TAG,"onAttach");
         try {
             mCallback = (OnHeadlineSelectedListener) activity;
         } catch (ClassCastException e) {
@@ -126,5 +130,17 @@ public class HeadlinesFragment extends Fragment  {
                     + " must implement OnHeadlineSelectedListener");
         }
 
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        Log.d(TAG,"onActivityCreated");
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        androidPitRssFeedTask.stopProgressDialog();
     }
 }
