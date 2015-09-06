@@ -1,6 +1,8 @@
 package com.example.student.myrss;
 
 import android.app.ProgressDialog;
+import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -39,6 +41,17 @@ public class AndroidPitRssFeedTask extends AsyncTask<Void, Void, List<String[]>>
         progDailog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         progDailog.setCancelable(true);
         progDailog.show();
+        lockScreenOrientation();
+    }
+
+    private void lockScreenOrientation() {
+        int currentOrientation = fragment.getActivity().getResources().getConfiguration().orientation;
+        if (currentOrientation == Configuration.ORIENTATION_PORTRAIT) {
+            fragment.getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        } else {
+            fragment.getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        }
+
     }
 
     @Override
@@ -54,13 +67,14 @@ public class AndroidPitRssFeedTask extends AsyncTask<Void, Void, List<String[]>>
     protected void onPostExecute(List<String[]> rssFeed) {
         fragment.setFeed(rssFeed);
         fragment.createAdapterFeed();
+        unlockScreenOrientation();
         progDailog.dismiss();
-
-
-
-
-
     }
+
+    private void unlockScreenOrientation() {
+        fragment.getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
+    }
+
     public InputStream getAndroidPitRssFeed(){
         InputStream in = null;
 
