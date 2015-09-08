@@ -5,12 +5,14 @@ import android.app.Fragment;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +20,7 @@ import java.util.List;
 /**
  * Created by student on 23.07.2015.
  */
-public class HeadlinesFragment extends Fragment  {
+public class HeadlinesFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
     public static final int POSITION_OF_TITLES_IN_FEED = 0;
     public static final int POSITION_OF_LINKS_IN_FEED = 1;
     public static final int POSITION_OF_HEADLINES_IMAGES_IN_FEED = 2;
@@ -31,19 +33,21 @@ public class HeadlinesFragment extends Fragment  {
     private List<Drawable> headlinesImages = new ArrayList<Drawable>();
     private List<String> headlinesImagesUrls = new ArrayList<String>();
     private ArticleViewAdapter adapter;
+    private SwipeRefreshLayout swipeRefreshLayout;
+    private ListView mRssFeed;
+    private List<String[]> rssFeed = new ArrayList<String[]>();
+    private AndroidPitRssFeedTask androidPitRssFeedTask;
 
     public List<String> getArticlesUrl() {
         return headlinesReferences;
     }
 
     public interface OnHeadlineSelectedListener {
+
+
         /** Called by HeadlinesFragment when a list item is selected */
          void onArticleSelected(int position);
     }
-    private ListView mRssFeed;
-    List<String[]> rssFeed = new ArrayList<String[]>();
-    AndroidPitRssFeedTask androidPitRssFeedTask;
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,6 +57,12 @@ public class HeadlinesFragment extends Fragment  {
         androidPitRssFeedTask.execute();
 
 
+
+    }
+
+
+    public HeadlinesFragment getFragment(){
+        return  this;
     }
     public void createAdapterFeed(){
         Log.d("createAdapter", "create adapter");
@@ -70,14 +80,9 @@ public class HeadlinesFragment extends Fragment  {
 
     }
     public void createAdapter(){
-        if (headlinesReferences == null) {
-            Log.d(TAG,"headlinesRef is null");
-        }
         adapter = new ArticleViewAdapter(headlinesTitles,headlinesReferences,headlinesImagesUrls,this);
-
         mRssFeed.setAdapter(adapter);
     }
-
     public void setImagesFromUrl(List<Drawable> images) {
 
         headlinesImages = images;
@@ -94,15 +99,28 @@ public class HeadlinesFragment extends Fragment  {
      //   mRssFeed = null;
     }
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
         mRssFeed = (ListView) rootView.findViewById(R.id.headlinesListView);
+
+
+             swipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipeRefreshLayout);
+            swipeRefreshLayout.setOnRefreshListener(this);
+
+
         createAdapter();
 
         return rootView;
+    }
+
+
+    @Override
+    public void onRefresh() {
+        Toast.makeText(getActivity(),"Refresh",Toast.LENGTH_LONG).show();
+        androidPitRssFeedTask = new AndroidPitRssFeedTask(getFragment());
+        androidPitRssFeedTask.execute();
     }
     @Override
     public void onStart() {

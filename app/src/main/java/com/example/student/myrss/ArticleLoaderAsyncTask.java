@@ -32,8 +32,9 @@ import java.util.List;
 import java.util.Map;
 //TODO: ПЕРЕДЕЛАТЬ ВЕСЬ КЛАСС! Сделать все проще и понятнее
 public class ArticleLoaderAsyncTask extends AsyncTask<String,Void,Void> {
+
     public static final String TAG = ArticleLoaderAsyncTask.class.getName();
-    public static final int SECTIONS_WITH_COMMENTS = 4;
+    public static final int SECTIONS_WITH_COMMENTS = 5;
     private ArticleFragment articleFragment;
     private List<String> bitmapImagesUrls;
     private String articleHeader;
@@ -83,49 +84,45 @@ public class ArticleLoaderAsyncTask extends AsyncTask<String,Void,Void> {
                 if (!e.attr("class").equals("articlePart articleComments")){
 
                     Elements elements = e.getAllElements();
-                    for (Element element : elements){
-                       Log.d(TAG,"element " + i + "= " + element.tag());
+                    for (int j = 0; j< elements.size();j++){
+                       Log.d(TAG,"element " + j + "= " + elements.get(j).tag());
 
-                        if (element.tag().toString().equals("ul")) {
+                        if (elements.get(j).tag().toString().equals("ul")) {
 
-                                if (element.attr("class").contains("deviceSpecs specTeaser")){
-                                    Log.d(TAG,"ul class = " + i + element.attr("class"));
-                                    markup.put(element.children().size()+" " + i,"ulTab");
+                            Log.d(TAG,"ul class = " + elements.attr("class") );
+                            if (elements.get(j).attr("class").equals("deviceSpecs specTeaser")){
+                                    markup.put(elements.get(j).children().size()+" " + j,"ulTab");
+                                }else{
+                                    if (elements.get(j).attr("class").contains("deviceSpecs specLine")) {
+                                         Log.d(TAG,"ul class specLine = "+ elements.get(j).children().size()+" " + i );
+                                        markup.put(elements.get(j).children().size()+" " + j,"ulTabRow");
+                                    }else{
+                                        markup.put(elements.get(j).children().size()+" " + j,"ul");
+                                    }
+
                                 }
-                                if (element.attr("class").contains("deviceSpecs specLine")) {
-                                    Log.d(TAG,"ul class specLine = " + i + element.attr("class"));
-                                    markup.put(element.children().size()+" " + i,"ulTabRow");
-                                }
-                            if ( !(element.attr("class").contains("deviceSpecs specLine" ) && !(element.attr("class").contains("deviceSpecs specTeaser" ))) ) {
-                                markup.put(element.children().size()+" " + i,"ul");
-                            }
+
+
 
 
                         }
                         //для того, чтобы не обрабатывать отдельно теги <a>, будем разбирать их внутри более крупных структурных единиц
-                        if (element.tag().toString().equals("li")) {
-                            String hyperLink = element.html();
+                        if (elements.get(j).tag().toString().equals("li")) {
+                            String hyperLink = elements.get(j).html();
                             markup.put(hyperLink,"li");
-                          /*  if (element.getElementsByTag("a")!=null){
 
-
-                                String hyperLink = element.html();
-                                markup.put(hyperLink,"liForLink");
-
-
-                            }else{markup.put(element.text(),"li");}*/
                         }
-                        if (element.tag().toString().equals("p")){
-                            markup.put(element.html(),"p");
+                        if (elements.get(j).tag().toString().equals("p")){
+                            markup.put(elements.get(j).html(),"p");
                         }
-                        if (element.tag().toString().equals("h2")){
-                            markup.put(element.text(),"h2");
+                        if (elements.get(j).tag().toString().equals("h2")){
+                            markup.put(elements.get(j).text(),"h2");
                         }
-                        if (element.tag().toString().equals("img")){
-                            markup.put(element.attr("src"),"img");
+                        if (elements.get(j).tag().toString().equals("img")){
+                            markup.put(elements.get(j).attr("src"), "img");
                         }
-                        if (element.tag().toString().equals("figcaption")){
-                            markup.put(element.text(),"figcaption");
+                        if (elements.get(j).tag().toString().equals("figcaption")){
+                            markup.put(elements.get(j).text(),"figcaption");
                          //   Log.d(TAG,"im figcaption and i've puted into the map ");
                         }
                     }
@@ -142,8 +139,7 @@ public class ArticleLoaderAsyncTask extends AsyncTask<String,Void,Void> {
     }
 
 
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    @Override
+
     protected void onPostExecute(Void aVoid) {
 
 
@@ -152,6 +148,12 @@ public class ArticleLoaderAsyncTask extends AsyncTask<String,Void,Void> {
         articleFragment.getLinearLayout().addView(texView);
         texView.setText(articleHeader);
         Iterator<Map.Entry<String, String>> itr1 = markup.entrySet().iterator();
+        Iterator<Map.Entry<String, String>> itr2 = markup.entrySet().iterator();
+        while (itr2.hasNext()){
+            Map.Entry<String, String> entry = itr2.next();
+            Log.d(TAG," full entry =" + entry.getValue());
+
+        }
         while (itr1.hasNext()) {
 
             Map.Entry<String, String> entry = itr1.next();
@@ -166,41 +168,55 @@ public class ArticleLoaderAsyncTask extends AsyncTask<String,Void,Void> {
                 for (int i = 0; i < numberOfColumns;i++) {
                     TableRow tableRow = new TableRow(articleFragment.getActivity());
                     entry = itr1.next();
+                    Log.d(TAG,"entry =" + entry.getValue());
                     TextView textView = new TextView(articleFragment.getActivity());
                     textView.setText(Html.fromHtml(entry.getKey()));
                     textView.setMovementMethod(LinkMovementMethod.getInstance());
-                    ImageView imageView = setIconImageView();
-                    //order is important
-                    tableRow.addView(imageView);
                     tableRow.addView(textView);
                     tableLayout.addView(tableRow);
                 }
             }
             if (entry.getValue().equals("ulTab") ) {
                 TableLayout tableLayout = new TableLayout(articleFragment.getActivity());
-                tableLayout.setColumnStretchable(1,true);
-                tableLayout.setColumnStretchable(0,true);
-                tableLayout.setColumnShrinkable(0,true);
-                tableLayout.setColumnShrinkable(1,true);
+                tableLayout.setColumnStretchable(1, true);
+                tableLayout.setColumnStretchable(0, true);
+                tableLayout.setColumnShrinkable(0, true);
+                tableLayout.setColumnShrinkable(1, true);
                 articleFragment.getLinearLayout().addView(tableLayout);
-                int numberOfColumns = Integer.parseInt(entry.getKey().split(" ")[0]);
-                for (int i = 0; i < numberOfColumns;i++) {
-                    TableRow tableRow = new TableRow(articleFragment.getActivity());
+                TextView newText = new TextView(articleFragment.getActivity());
+                /////////////////
+                TableRow tableRow1 = new TableRow(articleFragment.getActivity());
+                tableLayout.addView(tableRow1);
+                newText.setText("SDFGHJKL>KJHGFDFGHJKLKJHGFDFGHJK");
+                tableRow1.addView(newText);
+                /////////////
+                int numberOfRows = Integer.parseInt(entry.getKey().split(" ")[0]);
+                Log.d(TAG,"numberOfRows = " + numberOfRows);
+                entry = itr1.next();
+                Log.d(TAG,"entry =" + entry.getValue());
+                for (int i = 0; i < numberOfRows;i++) {
                     entry = itr1.next();
-                    if (entry.getValue().equals("ulTabRaw") ){
-                        int numberOfElements = Integer.parseInt(entry.getKey().split(" ")[0]);
-                        for (int j = 0;j< numberOfElements;j++) {
-                            entry = itr1.next();
-                            TextView textView = new TextView(articleFragment.getActivity());
-                            textView.setText(Html.fromHtml(entry.getKey()));
-                            textView.setMovementMethod(LinkMovementMethod.getInstance());
-                            tableRow.addView(textView);
+
+                    Log.d(TAG,"entry =" + entry.getValue());
+                        int numberOfRaw = 0;
+                    Log.d(TAG,"ulTabRaw number = " + numberOfRaw);
+                        while (entry.getValue().equals("ulTabRaw") ){
+
+                            TableRow tableRow = new TableRow(articleFragment.getActivity());
+                            numberOfRaw++;
+                            Log.d(TAG,"ulTabRaw number = " + numberOfRaw);
+                            int numberOfColumns = Integer.parseInt(entry.getKey().split(" ")[0]);
+                            Log.d(TAG,"numberOfColumns = " + numberOfColumns);
+                            for (int j = 0;j< numberOfColumns;j++) {
+                                entry = itr1.next();
+                                Log.d(TAG,"entry =" + entry.getValue());
+                                TextView textView = new TextView(articleFragment.getActivity());
+                                textView.setText(Html.fromHtml(entry.getKey()));
+                                textView.setMovementMethod(LinkMovementMethod.getInstance());
+                                tableRow.addView(textView);
+                            }
+                            tableLayout.addView(tableRow);
                         }
-                    }
-
-
-
-                    tableLayout.addView(tableRow);
                 }
             }
             if (entry.getValue().equals("p")){
@@ -235,15 +251,7 @@ public class ArticleLoaderAsyncTask extends AsyncTask<String,Void,Void> {
 
     }
 
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    @NonNull
-    private ImageView setIconImageView() {
-        ImageView sampleImageView = new ImageView(articleFragment.getActivity());
-        Resources resources = articleFragment.getResources();
-        Drawable drawable = resources.getDrawable(R.drawable.android_small, articleFragment.getActivity().getTheme());
-        sampleImageView.setImageDrawable(drawable);
-        return sampleImageView;
-    }
+
 
     private void unlockScreenOrientation() {
         articleFragment.getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
